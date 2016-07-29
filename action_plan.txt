@@ -1,0 +1,8 @@
+1. Design - Parking Lot, User, Ticket, Slot, Car etc. 
+2. Then model-methods to park a car, empty a slot etc.
+3. Write lib functions for parsing stuff.
+4. Write rake tasks with meaningful names. Make sure the main code lies in the model methods only.
+5. Tests. Unit tests please!!! Don't forget.
+5. Write minimal controller actions to emulate the CLI so that a front-end client can be attached. Can be a mobile app or an JS framework. - Low priority.
+6. Try out elasticsearch and make it fast for querying. Assuming the parking lot is huge and to be made scalable.
+7. Dockerize it!
