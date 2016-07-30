@@ -1,16 +1,16 @@
 class Ticket < ActiveRecord::Base
-	belongs_to :slot
-	belongs_to :car
-	belongs_to :user
+  belongs_to :slot
+  belongs_to :car
+  belongs_to :user
 
-	validates_presence_of :slot_id, :car_id
+  validates_presence_of :slot_id, :car_id
 
-	scope :still_parked_tickets, -> { where(still_parked: true) }
+  scope :still_parked_tickets, -> { where(still_parked: true) }
 
-	def close_ticket
-		ticket = slot.tickets.order("created_at DESC").first
-		ticket.still_parked = false
-		ticket.parked_till = Time.now
-		ticket.save!
-	end
+  def self.close_ticket(slot)
+    ticket = slot.tickets.order("created_at DESC").first
+    ticket.still_parked = false
+    ticket.parked_till = Time.now
+    ticket.save!
+  end
 end
