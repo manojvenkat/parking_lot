@@ -21,8 +21,15 @@ class Slot < ActiveRecord::Base
 		tickets.find_by(still_parked: true)
 	end
 
-	def get_slot_num(reg_no)
-		
+	def self.get_slot_num(parking_space, reg_no)
+		car = Car.find_by(reg_no: reg_no)
+		if car.present?
+			slot = parking_space.slots.find_by(current_car_id: car.id)
+			if slot.present?
+				puts slot.parking_slot_id
+				return
+			end
+		end
+		puts ParkingSpace::ReturnStrings::NOT_FOUND
 	end
-
 end

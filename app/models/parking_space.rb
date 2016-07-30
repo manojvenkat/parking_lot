@@ -11,6 +11,7 @@ class ParkingSpace < ActiveRecord::Base
 		ALLOCATED = "ALLOCATED SLOT NUMBER : "
 		ERROR = "ENCOUNTERED AN ERROR!"
 		SLOT_FREED = "SLOT NUMBER FREED : "
+		NOT_FOUND = "NOT FOUND!"
 	end
 
 	def create_parking_slots
@@ -69,7 +70,26 @@ class ParkingSpace < ActiveRecord::Base
 	end
 
 	def get_cars_of_color(color)
-		puts Car.where(id: slots.pluck(:current_car_id)).where(color: color).pluck(:reg_no)
+		cars_parked =  Car.where(id: self.slots.pluck(:current_car_id))
+		cars_of_color = cars_parked.where(color: color)
+		reg_numbers = cars_of_color.pluck(:reg_no).map(&:inspect).join(', ')
+		reg_numbers.present? ? reg_numbers : ReturnStrings::NOT_FOUND
 	end
 
+	def get_slot_nums_with_cars_of_color(color)
+		slots_cars = slots.pluck(:current_car_id, :parking_slot_id).select{|a| a[0].present? }
+
+		slots_cars_hash = Hash.new
+		slots_cars.each{ |k,v| slots_cars_hash[k] = v }
+
+		car_ids = slots.pluck(:current_car_id)
+		car_ids_of_color = Car.where(id: car_ids).where(color: color).pluck(:id)
+		
+		slots = []
+		car_ids_of_color.each do |car_id|
+			slots << slots_cars_hash[car_id]
+		end
+
+		puts slots.map(&:inspect).join(', ')
+	end
 end
