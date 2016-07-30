@@ -11,6 +11,6 @@ class Ticket < ActiveRecord::Base
     ticket = slot.tickets.order("created_at DESC").first
     ticket.still_parked = false
     ticket.parked_till = Time.now
-    ticket.save!
+    ticket.save
   end
 end

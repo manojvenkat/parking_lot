@@ -37,8 +37,10 @@ class ParkingSpace < ActiveRecord::Base
 
         puts ReturnStrings::SUCCESS
         puts ReturnStrings::ALLOCATED + parking_slot.parking_slot_id.to_s
+        return true
       else
         puts ReturnStrings::PARKING_LOT_FULL
+        return false
       end
     rescue Exception => e
       puts e
@@ -49,11 +51,15 @@ class ParkingSpace < ActiveRecord::Base
   def leave(slot_id)
     begin
       slot = slots.find_by(parking_slot_id: slot_id)
+      if slot.occupied
+        Ticket.close_ticket(slot)
+        slot.mark_unoccupied
 
-      Ticket.close_ticket(slot)
-      slot.mark_unoccupied
-
-      puts ReturnStrings::SLOT_FREED + slot.parking_slot_id.to_s
+        puts ReturnStrings::SLOT_FREED + slot.parking_slot_id.to_s
+        return true
+      else
+        return false
+      end
     rescue Exception => e
       puts e
       puts ReturnStrings::ERROR
@@ -61,13 +67,15 @@ class ParkingSpace < ActiveRecord::Base
   end
 
   def status
-    puts "Slot no.\t Registration No.\t Color\n"
+    status_string = "Slot no.\t Registration No.\t Color\n"
     slots.each do |slot|
       car = Car.find_by(id: slot.current_car_id)
       unless car.nil?
-        puts "#{slot.parking_slot_id}\t #{car.reg_no}\t #{car.color}\n"
+        status_string += "#{slot.parking_slot_id}\t #{car.reg_no}\t #{car.color}\n"
       end
     end
+    puts status_string
+    status_string
   end
 
   def registration_numbers_for_cars_with_colour(color)
@@ -76,6 +84,7 @@ class ParkingSpace < ActiveRecord::Base
     reg_numbers = cars_of_color.pluck(:reg_no).join(', ')
     return_string = reg_numbers.present? ? reg_numbers : ReturnStrings::NOT_FOUND
     puts return_string
+    return_string
   end
 
   def slot_numbers_for_cars_with_colour(color)
@@ -93,6 +102,7 @@ class ParkingSpace < ActiveRecord::Base
     end
 
     puts slots.map(&:inspect).join(', ')
+    slots
   end
 
   def slot_number_for_registration_number(reg_no)
@@ -101,7 +111,7 @@ class ParkingSpace < ActiveRecord::Base
       slot = slots.find_by(current_car_id: car.id)
       if slot.present?
         puts slot.parking_slot_id
-        return
+        return slot.parking_slot_id
       end
     end
     puts ParkingSpace::ReturnStrings::NOT_FOUND
