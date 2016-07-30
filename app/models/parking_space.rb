@@ -24,6 +24,8 @@ class ParkingSpace < ActiveRecord::Base
     (1..slot_count).each do |parking_slot_id|
       slots.create!(parking_slot_id: parking_slot_id)
     end
+
+    puts "Create a parking space with #{slot_count} slots."
   end
 
   def park(reg_no, color)

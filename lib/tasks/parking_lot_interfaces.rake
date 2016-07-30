@@ -22,12 +22,12 @@ namespace :parking_lot do
 
     parking_space = nil    
     while true
-      begin
-        command = gets.chomp
+      begin 
+        command = STDIN.gets.strip
         command_hash = TranslationHelper.translate_command(command)
         parking_space = run_command(parking_space, command_hash)
       rescue Exception => e
-        puts "Exiting. Reason : " + e.to_s
+        puts "Problem with the input : " + e.to_s
       end
     end
   end
