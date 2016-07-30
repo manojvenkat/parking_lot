@@ -22,3 +22,7 @@ slot_number_for_registration_number KA­01­HH­3141
 slot_number_for_registration_number MH­04­AY­1111
 
 
+Setup: 
+1. Setup rails 
+2. For the file input: "rake parking_lot:process_file_input[file_input.txt]"
+3. For the interactive input: "rake parking_lot:interactive_console"
